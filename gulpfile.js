@@ -1,5 +1,5 @@
-//import { deleteAsync } from "del";
 const {src, dest, watch, series, parallel} = require('gulp');
+const fs = require('fs');
 const clean = require('gulp-clean');
 const sass = require('gulp-sass')(require('sass'));
 const cleanCSS = require('gulp-clean-css');
@@ -45,6 +45,16 @@ const paths = {
         dest: './dist/assets/images/'
     }
 }
+
+const cleanDist = () => {
+    if(fs.existsSync('dist')) {
+        return src('dist').pipe(clean())
+    }
+
+    console.log('Dist is empty')
+    return src('.');
+};
+
 
 const html = () => {
     return src(paths.html.src)
@@ -151,7 +161,6 @@ const watchFilesTS = () => {
 }
 
 
-const cleanDist = () => src('dist').pipe(clean());
 
 const dev = series(cleanDist, fonts, img, html, parallel(styles, scripts), watchFiles);
 const build = series(cleanDist, fonts, img, html, parallel(styles, scripts));
